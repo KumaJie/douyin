@@ -1,4 +1,4 @@
-module main
+module github.com/KumaJie/douyin
 
 go 1.20
 
