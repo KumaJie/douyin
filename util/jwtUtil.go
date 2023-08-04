@@ -25,9 +25,9 @@ func GenerateToken(userId int64, userName string, expiration time.Duration) (str
 	if err != nil {
 		return "", err
 	}
-	//if err = SetToken(tokenString, expiration); err != nil {
-	//	return "", err
-	//}
+	if err = SetToken(tokenString, expiration); err != nil {
+		return "", err
+	}
 	return tokenString, nil
 }
 
