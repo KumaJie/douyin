@@ -3,7 +3,7 @@ package repository
 import "sync"
 
 type User struct {
-	Id              int64  `gorm:"primary_key;column:user_id"`
+	ID              int64  `gorm:"primary_key;column:user_id"`
 	Name            string `gorm:"column:username"`
 	Password        string `gorm:"column:password"`
 	Avatar          string `gorm:"column:avatar"`
@@ -36,12 +36,19 @@ func (*UserDao) CreateUser(user *User) error {
 	return nil
 }
 
-func (*UserDao) VerifyUser(user *User) error {
-	var userInDB User
+func (*UserDao) GetUserByName(userName string) (User, error) {
+	var user User
 	// 可能出现NotFind异常
-	if err := db.First(&userInDB, user).Error; err != nil {
-		return err
+	if err := db.Where("username = ?", userName).First(&user).Error; err != nil {
+		return User{}, err
 	}
-	user = &userInDB
-	return nil
+	return user, nil
+}
+
+func (*UserDao) GetUserByID(userID int64) (User, error) {
+	var user User
+	if err := db.Where("user_id = ?", userID).Find(&user).Error; err != nil {
+		return User{}, err
+	}
+	return user, nil
 }

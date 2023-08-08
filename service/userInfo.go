@@ -1,25 +1,38 @@
 package service
 
-import "github.com/KumaJie/douyin/repository"
+import (
+	"fmt"
+	"github.com/KumaJie/douyin/repository"
+	"github.com/KumaJie/douyin/util"
+)
 
-func CreateUser(username string, password string) (userId int64, err error) {
+func CreateUser(userName string, password string) (int64, error) {
+	encrypted, _ := util.HashPwd(password)
 	user := &repository.User{
-		Name:     username,
-		Password: password,
+		Name:     userName,
+		Password: string(encrypted),
 	}
 	if err := repository.UserDaoInstance().CreateUser(user); err != nil {
 		return -1, err
 	}
-	return user.Id, nil
+	return user.ID, nil
 }
 
-func VerifyUser(username string, password string) (userId int64, err error) {
-	user := &repository.User{
-		Name:     username,
-		Password: password,
+func VerifyUser(userName string, password string) (int64, error) {
+	user, err := repository.UserDaoInstance().GetUserByName(userName)
+	if err != nil {
+		return -1, fmt.Errorf("用户不存在")
 	}
-	if err := repository.UserDaoInstance().VerifyUser(user); err != nil {
-		return -1, err
+	if !util.VerifyPwd(user.Password, password) {
+		return -1, fmt.Errorf("密码错误")
 	}
-	return user.Id, nil
+	return user.ID, nil
+}
+
+func GetUserInfo(userID int64) (repository.User, error) {
+	user, err := repository.UserDaoInstance().GetUserByID(userID)
+	if err != nil {
+		return repository.User{}, err
+	}
+	return user, nil
 }

@@ -6,22 +6,22 @@ import (
 	"time"
 )
 
-var rdb *redis.Client
+var RedisClient *redis.Client
 
 func RedisInit() error {
-	rdb = redis.NewClient(&redis.Options{
+	RedisClient = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
 		DB:       0,
 	})
-	err := rdb.Ping(context.Background()).Err()
+	err := RedisClient.Ping(context.Background()).Err()
 	return err
 }
 
 func GetToken(token string) (string, error) {
-	return rdb.Get(context.Background(), token).Result()
+	return RedisClient.Get(context.Background(), token).Result()
 }
 
 func SetToken(token string, expiration time.Duration) error {
-	return rdb.Set(context.Background(), token, token, expiration).Err()
+	return RedisClient.Set(context.Background(), token, token, expiration).Err()
 }
