@@ -5,6 +5,7 @@ import (
 	"github.com/KumaJie/douyin/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -15,27 +16,46 @@ type Response struct {
 
 type UserLoginResponse struct {
 	Response
-	UserId int64  `json:"user_id,omitempty"`
+	UserID int64  `json:"user_id,omitempty"`
 	Token  string `json:"token"`
+}
+
+type User struct {
+	ID              int64  `json:"id"`
+	Name            string `json:"name"`
+	FollowCount     int64  `json:"follow_count"`
+	FollowerCount   int64  `json:"follower_count"`
+	IsFollow        bool   `json:"is_follow"`
+	Avatar          string `json:"avatar"`
+	BackgroundImage string `json:"background_image"`
+	Signature       string `json:"signature"`
+	TotalFavorited  string `json:"total_favorited"`
+	WorkCount       int64  `json:"work_count"`
+	FavoriteCount   int64  `json:"favorite_count"`
+}
+
+type UserInfoResponse struct {
+	Response
+	User User `json:"user"`
 }
 
 func Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	userId, err := service.VerifyUser(username, password)
+	userID, err := service.VerifyUser(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User not exist"},
 		})
 		return
 	}
-	token, err := util.GenerateToken(userId, username, time.Hour)
+	token, err := util.GenerateToken(userID, username, time.Hour)
 	c.JSON(http.StatusOK, UserLoginResponse{
 		Response: Response{
 			StatusCode: 0,
 			StatusMsg:  "OK",
 		},
-		UserId: userId,
+		UserID: userID,
 		Token:  token,
 	})
 }
@@ -43,20 +63,50 @@ func Login(c *gin.Context) {
 func Register(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	userId, err := service.CreateUser(username, password)
+
+	userID, err := service.CreateUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
-		})
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User already exist"})
 		return
 	}
-	token, err := util.GenerateToken(userId, username, time.Hour)
+	token, err := util.GenerateToken(userID, username, time.Hour)
 	c.JSON(http.StatusOK, UserLoginResponse{
 		Response: Response{
 			StatusCode: 0,
 			StatusMsg:  "OK",
 		},
-		UserId: userId,
+		UserID: userID,
 		Token:  token,
 	})
+}
+
+func UserInfo(c *gin.Context) {
+	userIDStr := c.Query("user_id")
+	userID, _ := strconv.ParseInt(userIDStr, 10, 64)
+	user, err := service.GetUserInfo(userID)
+	if err != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Get UserInfo fail"})
+		return
+	}
+	// 还需要增加关注数等查询
+	c.JSON(http.StatusOK, UserInfoResponse{
+		Response: Response{
+			StatusCode: 0,
+			StatusMsg:  "",
+		},
+		User: User{
+			ID:              user.ID,
+			Name:            user.Name,
+			FollowCount:     0,
+			FollowerCount:   0,
+			IsFollow:        false,
+			Avatar:          user.Avatar,
+			BackgroundImage: user.BackGroundImage,
+			Signature:       user.Signature,
+			TotalFavorited:  "",
+			WorkCount:       0,
+			FavoriteCount:   0,
+		},
+	})
+
 }
