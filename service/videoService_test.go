@@ -3,15 +3,15 @@ package service
 import (
 	"fmt"
 	"github.com/KumaJie/douyin/models"
-	"github.com/KumaJie/douyin/utils"
+	"github.com/KumaJie/douyin/util"
 	"os"
 	"testing"
 )
 
 func Test(t *testing.T) {
 
-	utils.InitConfig()
-	utils.InitMysql()
+	util.InitConfig()
+	util.InitMysql()
 
 	fmt.Println("视频：")
 	filePath := "..//upload/77cdbeed6b92c020a4ceb5c96c724e74.mp4"

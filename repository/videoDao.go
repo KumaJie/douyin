@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/KumaJie/douyin/utils"
+	"github.com/KumaJie/douyin/util"
 	"sync"
 	"time"
 )
@@ -31,7 +31,7 @@ type VideoDAO struct {
 // 获取按投稿时间倒序的视频列表
 func (*VideoDAO) GetVideoList() ([]Video, error) {
 	var videos []Video
-	result := utils.DB.Order("create_time desc").Limit(30).Find(&videos)
+	result := util.DB.Order("create_time desc").Limit(30).Find(&videos)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -39,7 +39,7 @@ func (*VideoDAO) GetVideoList() ([]Video, error) {
 }
 
 func (*VideoDAO) InsertVideo(video Video) error {
-	result := utils.DB.Create(video)
+	result := util.DB.Create(video)
 	if result.Error != nil {
 		return result.Error
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/KumaJie/douyin/models"
 	"github.com/KumaJie/douyin/repository"
+	"github.com/KumaJie/douyin/util"
 	"log"
 	"time"
 )
@@ -37,7 +38,18 @@ func (s *VideoService) GetDouyinFeed() (*models.DouyinFeedResponse, error) {
 }
 
 func (s *VideoService) CreateVideo(req models.CreateVideoRequest) error {
-	saveVideoToFile(req.Data, req.Title)
+
+	//获取用户id信息
+	cla, err := util.VerifyToken(req.Token)
+	if err != nil {
+		return err
+	}
+
+	err = saveVideoToFile(req.Data, req.Title)
+	if err != nil {
+		return err
+	}
+
 	vid := saveVideoToAli(req.Title)
 	time.Sleep(3 * time.Second)
 	v, err := GetPlayInfo(vid)
@@ -46,7 +58,7 @@ func (s *VideoService) CreateVideo(req models.CreateVideoRequest) error {
 	}
 	v1 := repository.Video{
 		VideoID:    v.VideoID,
-		UserID:     v.UserID,
+		UserID:     int(cla.UserId),
 		PlayURL:    v.PlayURL,
 		CoverURL:   v.CoverURL,
 		Title:      v.Title,

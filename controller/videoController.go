@@ -7,6 +7,11 @@ import (
 	"net/http"
 )
 
+type VideoController struct {
+	videoService *service.VideoService
+}
+
+// 获取视频
 func (ctrl *VideoController) DouyinFeedHandler(c *gin.Context) {
 	// 调用 service.GetDouyinFeed 获取 Douyin Feed 数据
 	response, err := ctrl.videoService.GetDouyinFeed()
@@ -20,10 +25,6 @@ func (ctrl *VideoController) DouyinFeedHandler(c *gin.Context) {
 
 	// 将服务层返回的数据作为 JSON 响应发送
 	c.JSON(http.StatusOK, response)
-}
-
-type VideoController struct {
-	videoService *service.VideoService
 }
 
 // 视频投稿接口处理函数

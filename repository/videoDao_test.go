@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"github.com/KumaJie/douyin/utils"
+	"github.com/KumaJie/douyin/util"
 	"testing"
 	"time"
 )
 
 func TestAddUser(t *testing.T) {
-	utils.InitConfig()
-	utils.InitMysql()
+	util.InitConfig()
+	util.InitMysql()
 	videoService := &VideoDAO{} // 创建 VideoService 实例
 	v := Video{
 		VideoID:    -1,

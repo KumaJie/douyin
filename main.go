@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/KumaJie/douyin/router"
-	"github.com/KumaJie/douyin/utils"
+	"github.com/KumaJie/douyin/util"
 )
 
 func main() {
 
-	utils.InitConfig()
-	utils.InitMysql()
+	util.InitConfig()
+	util.InitMysql()
 	router.SetupRouter()
 
 	/*	r := gin.Default()
