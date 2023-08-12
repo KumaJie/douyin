@@ -39,10 +39,14 @@ type UserInfoResponse struct {
 	User User `json:"user"`
 }
 
-func Login(c *gin.Context) {
+type UserController struct {
+	UserService *service.UserService
+}
+
+func (u *UserController) Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	userID, err := service.VerifyUser(username, password)
+	userID, err := u.UserService.VerifyUser(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User not exist"},
@@ -60,11 +64,11 @@ func Login(c *gin.Context) {
 	})
 }
 
-func Register(c *gin.Context) {
+func (u *UserController) Register(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	userID, err := service.CreateUser(username, password)
+	userID, err := u.UserService.CreateUser(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User already exist"})
 		return
@@ -80,10 +84,10 @@ func Register(c *gin.Context) {
 	})
 }
 
-func UserInfo(c *gin.Context) {
+func (u *UserController) UserInfo(c *gin.Context) {
 	userIDStr := c.Query("user_id")
 	userID, _ := strconv.ParseInt(userIDStr, 10, 64)
-	user, err := service.GetUserInfo(userID)
+	user, err := u.UserService.GetUserInfo(userID)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Get UserInfo fail"})
 		return
