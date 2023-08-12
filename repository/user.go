@@ -15,28 +15,28 @@ func (User) TableName() string {
 	return "user"
 }
 
-type UserDao struct {
+type UserDAO struct {
 }
 
-var userDao *UserDao
+var UserDao *UserDAO
 var userOnce sync.Once
 
-func UserDaoInstance() *UserDao {
+func UserDaoInstance() *UserDAO {
 	userOnce.Do(
 		func() {
-			userDao = &UserDao{}
+			UserDao = &UserDAO{}
 		})
-	return userDao
+	return UserDao
 }
 
-func (*UserDao) CreateUser(user *User) error {
+func (*UserDAO) CreateUser(user *User) error {
 	if err := db.Create(user).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (*UserDao) GetUserByName(userName string) (User, error) {
+func (*UserDAO) GetUserByName(userName string) (User, error) {
 	var user User
 	// 可能出现NotFind异常
 	if err := db.Where("username = ?", userName).First(&user).Error; err != nil {
@@ -45,7 +45,7 @@ func (*UserDao) GetUserByName(userName string) (User, error) {
 	return user, nil
 }
 
-func (*UserDao) GetUserByID(userID int64) (User, error) {
+func (*UserDAO) GetUserByID(userID int64) (User, error) {
 	var user User
 	if err := db.Where("user_id = ?", userID).Find(&user).Error; err != nil {
 		return User{}, err

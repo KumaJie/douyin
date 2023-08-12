@@ -6,7 +6,10 @@ import (
 	"github.com/KumaJie/douyin/util"
 )
 
-func CreateUser(userName string, password string) (int64, error) {
+type UserService struct {
+}
+
+func (*UserService) CreateUser(userName string, password string) (int64, error) {
 	encrypted, _ := util.HashPwd(password)
 	user := &repository.User{
 		Name:     userName,
@@ -18,7 +21,7 @@ func CreateUser(userName string, password string) (int64, error) {
 	return user.ID, nil
 }
 
-func VerifyUser(userName string, password string) (int64, error) {
+func (*UserService) VerifyUser(userName string, password string) (int64, error) {
 	user, err := repository.UserDaoInstance().GetUserByName(userName)
 	if err != nil {
 		return -1, fmt.Errorf("用户不存在")
@@ -29,7 +32,7 @@ func VerifyUser(userName string, password string) (int64, error) {
 	return user.ID, nil
 }
 
-func GetUserInfo(userID int64) (repository.User, error) {
+func (*UserService) GetUserInfo(userID int64) (repository.User, error) {
 	user, err := repository.UserDaoInstance().GetUserByID(userID)
 	if err != nil {
 		return repository.User{}, err
