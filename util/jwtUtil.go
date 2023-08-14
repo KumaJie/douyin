@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var signature = "qqqqqq"
+var signature = "github.com/KumaJie/douyin"
 
 type UsrClaims struct {
 	UserId   int64
