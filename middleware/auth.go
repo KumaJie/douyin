@@ -8,11 +8,8 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var token string
-		switch c.Request.Method {
-		case "GET":
-			token = c.Query("token")
-		case "POST":
+		token := c.Query("token")
+		if token == "" {
 			token = c.PostForm("token")
 		}
 		if token == "" {

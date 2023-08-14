@@ -44,8 +44,8 @@ type UserController struct {
 }
 
 func (u *UserController) Login(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
+	username := c.Query("username")
+	password := c.Query("password")
 	userID, err := u.UserService.VerifyUser(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
@@ -65,8 +65,8 @@ func (u *UserController) Login(c *gin.Context) {
 }
 
 func (u *UserController) Register(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
+	username := c.Query("username")
+	password := c.Query("password")
 
 	userID, err := u.UserService.CreateUser(username, password)
 	if err != nil {
