@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-var signature = "github.com/KumaJie/douyin"
+const signature = "github.com/KumaJie/douyin"
+const expiration = time.Hour * 24 * 7
 
 type UsrClaims struct {
 	UserId   int64
@@ -13,7 +14,7 @@ type UsrClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(userId int64, userName string, expiration time.Duration) (string, error) {
+func GenerateToken(userId int64, userName string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &UsrClaims{
 		UserId:   userId,
 		UserName: userName,

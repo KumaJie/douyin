@@ -1,21 +1,16 @@
 package controller
 
 import (
+	"github.com/KumaJie/douyin/models"
 	"github.com/KumaJie/douyin/service"
 	"github.com/KumaJie/douyin/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"time"
 )
 
-type Response struct {
-	StatusCode int32  `json:"status_code"`
-	StatusMsg  string `json:"status_msg,omitempty"`
-}
-
 type UserLoginResponse struct {
-	Response
+	models.Response
 	UserID int64  `json:"user_id,omitempty"`
 	Token  string `json:"token"`
 }
@@ -35,7 +30,7 @@ type User struct {
 }
 
 type UserInfoResponse struct {
-	Response
+	models.Response
 	User User `json:"user"`
 }
 
@@ -49,13 +44,13 @@ func (u *UserController) Login(c *gin.Context) {
 	userID, err := u.UserService.VerifyUser(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User not exist"},
+			Response: models.Response{StatusCode: 1, StatusMsg: "User not exist"},
 		})
 		return
 	}
-	token, err := util.GenerateToken(userID, username, time.Hour)
+	token, err := util.GenerateToken(userID, username)
 	c.JSON(http.StatusOK, UserLoginResponse{
-		Response: Response{
+		Response: models.Response{
 			StatusCode: 0,
 			StatusMsg:  "OK",
 		},
@@ -70,12 +65,12 @@ func (u *UserController) Register(c *gin.Context) {
 
 	userID, err := u.UserService.CreateUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User already exist"})
+		c.JSON(http.StatusOK, models.Response{StatusCode: 1, StatusMsg: "User already exist"})
 		return
 	}
-	token, err := util.GenerateToken(userID, username, time.Hour)
+	token, err := util.GenerateToken(userID, username)
 	c.JSON(http.StatusOK, UserLoginResponse{
-		Response: Response{
+		Response: models.Response{
 			StatusCode: 0,
 			StatusMsg:  "OK",
 		},
@@ -89,12 +84,12 @@ func (u *UserController) UserInfo(c *gin.Context) {
 	userID, _ := strconv.ParseInt(userIDStr, 10, 64)
 	user, err := u.UserService.GetUserInfo(userID)
 	if err != nil {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Get UserInfo fail"})
+		c.JSON(http.StatusOK, models.Response{StatusCode: 1, StatusMsg: "Get UserInfo fail"})
 		return
 	}
 	// 还需要增加关注数等查询
 	c.JSON(http.StatusOK, UserInfoResponse{
-		Response: Response{
+		Response: models.Response{
 			StatusCode: 0,
 			StatusMsg:  "",
 		},

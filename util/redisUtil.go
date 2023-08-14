@@ -7,6 +7,7 @@ import (
 )
 
 var RedisClient *redis.Client
+var ctx = context.Background()
 
 func RedisInit() error {
 	RedisClient = redis.NewClient(&redis.Options{
@@ -18,10 +19,15 @@ func RedisInit() error {
 	return err
 }
 
+// GetToken 查看一个token串是否存在于redis中
 func GetToken(token string) (string, error) {
-	return RedisClient.Get(context.Background(), token).Result()
+	return RedisClient.Get(ctx, token).Result()
 }
 
 func SetToken(token string, expiration time.Duration) error {
-	return RedisClient.Set(context.Background(), token, token, expiration).Err()
+	return RedisClient.Set(ctx, token, token, expiration).Err()
+}
+
+func RenewToken(token string) error {
+	return RedisClient.Set(ctx, token, token, expiration).Err()
 }
