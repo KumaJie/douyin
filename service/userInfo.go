@@ -11,6 +11,12 @@ type UserService struct {
 
 func (*UserService) CreateUser(userName string, password string) (int64, error) {
 	encrypted, _ := util.HashPwd(password)
+	// 保证userName唯一
+	_, err := repository.UserDaoInstance().GetUserByName(userName)
+	if err == nil {
+		return -1, fmt.Errorf("%v已被注册", userName)
+	}
+
 	user := &repository.User{
 		Name:     userName,
 		Password: string(encrypted),
@@ -24,7 +30,7 @@ func (*UserService) CreateUser(userName string, password string) (int64, error) 
 func (*UserService) VerifyUser(userName string, password string) (int64, error) {
 	user, err := repository.UserDaoInstance().GetUserByName(userName)
 	if err != nil {
-		return -1, fmt.Errorf("用户不存在")
+		return -1, fmt.Errorf("用户%v不存在", userName)
 	}
 	if !util.VerifyPwd(user.Password, password) {
 		return -1, fmt.Errorf("密码错误")
