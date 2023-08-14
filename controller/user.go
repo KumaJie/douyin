@@ -43,8 +43,8 @@ func (u *UserController) Login(c *gin.Context) {
 	password := c.Query("password")
 	userID, err := u.UserService.VerifyUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: models.Response{StatusCode: 1, StatusMsg: "User not exist"},
+		c.JSON(http.StatusBadRequest, UserLoginResponse{
+			Response: models.Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
 		return
 	}
@@ -65,7 +65,7 @@ func (u *UserController) Register(c *gin.Context) {
 
 	userID, err := u.UserService.CreateUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusOK, models.Response{StatusCode: 1, StatusMsg: "User already exist"})
+		c.JSON(http.StatusBadRequest, models.Response{StatusCode: 1, StatusMsg: err.Error()})
 		return
 	}
 	token, err := util.GenerateToken(userID, username)
@@ -84,7 +84,7 @@ func (u *UserController) UserInfo(c *gin.Context) {
 	userID, _ := strconv.ParseInt(userIDStr, 10, 64)
 	user, err := u.UserService.GetUserInfo(userID)
 	if err != nil {
-		c.JSON(http.StatusOK, models.Response{StatusCode: 1, StatusMsg: "Get UserInfo fail"})
+		c.JSON(http.StatusBadRequest, models.Response{StatusCode: 1, StatusMsg: "Get UserInfo fail"})
 		return
 	}
 	// 还需要增加关注数等查询
