@@ -42,6 +42,7 @@ func AuthMiddleware() gin.HandlerFunc {
 					StatusMsg:  "Token延期失败",
 				})
 				c.Abort()
+				return
 			}
 		}
 		c.Next()
