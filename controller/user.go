@@ -9,31 +9,6 @@ import (
 	"strconv"
 )
 
-type UserLoginResponse struct {
-	models.Response
-	UserID int64  `json:"user_id,omitempty"`
-	Token  string `json:"token,omitempty"`
-}
-
-type User struct {
-	ID              int64  `json:"id"`
-	Name            string `json:"name"`
-	FollowCount     int64  `json:"follow_count"`
-	FollowerCount   int64  `json:"follower_count"`
-	IsFollow        bool   `json:"is_follow"`
-	Avatar          string `json:"avatar"`
-	BackgroundImage string `json:"background_image"`
-	Signature       string `json:"signature"`
-	TotalFavorited  int64  `json:"total_favorited"`
-	WorkCount       int64  `json:"work_count"`
-	FavoriteCount   int64  `json:"favorite_count"`
-}
-
-type UserInfoResponse struct {
-	models.Response
-	User *User `json:"user,omitempty"`
-}
-
 type UserController struct {
 	UserService *service.UserService
 }
@@ -43,13 +18,13 @@ func (u *UserController) Login(c *gin.Context) {
 	password := c.Query("password")
 	userID, err := u.UserService.VerifyUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, UserLoginResponse{
+		c.JSON(http.StatusBadRequest, models.UserLoginResponse{
 			Response: models.Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
 		return
 	}
 	token, err := util.GenerateToken(userID, username)
-	c.JSON(http.StatusOK, UserLoginResponse{
+	c.JSON(http.StatusOK, models.UserLoginResponse{
 		Response: models.Response{
 			StatusCode: 0,
 			StatusMsg:  "OK",
@@ -69,7 +44,7 @@ func (u *UserController) Register(c *gin.Context) {
 		return
 	}
 	token, err := util.GenerateToken(userID, username)
-	c.JSON(http.StatusOK, UserLoginResponse{
+	c.JSON(http.StatusOK, models.UserLoginResponse{
 		Response: models.Response{
 			StatusCode: 0,
 			StatusMsg:  "OK",
@@ -88,12 +63,12 @@ func (u *UserController) UserInfo(c *gin.Context) {
 		return
 	}
 	// 还需要增加关注数等查询
-	c.JSON(http.StatusOK, UserInfoResponse{
+	c.JSON(http.StatusOK, models.UserInfoResponse{
 		Response: models.Response{
 			StatusCode: 0,
-			StatusMsg:  "",
+			StatusMsg:  "OK",
 		},
-		User: &User{
+		User: &models.UserInfo{
 			ID:              user.ID,
 			Name:            user.Name,
 			FollowCount:     0,
