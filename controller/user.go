@@ -12,7 +12,7 @@ import (
 type UserLoginResponse struct {
 	models.Response
 	UserID int64  `json:"user_id,omitempty"`
-	Token  string `json:"token"`
+	Token  string `json:"token,omitempty"`
 }
 
 type User struct {
@@ -24,14 +24,14 @@ type User struct {
 	Avatar          string `json:"avatar"`
 	BackgroundImage string `json:"background_image"`
 	Signature       string `json:"signature"`
-	TotalFavorited  string `json:"total_favorited"`
+	TotalFavorited  int64  `json:"total_favorited"`
 	WorkCount       int64  `json:"work_count"`
 	FavoriteCount   int64  `json:"favorite_count"`
 }
 
 type UserInfoResponse struct {
 	models.Response
-	User User `json:"user"`
+	User *User `json:"user,omitempty"`
 }
 
 type UserController struct {
@@ -93,7 +93,7 @@ func (u *UserController) UserInfo(c *gin.Context) {
 			StatusCode: 0,
 			StatusMsg:  "",
 		},
-		User: User{
+		User: &User{
 			ID:              user.ID,
 			Name:            user.Name,
 			FollowCount:     0,
@@ -102,7 +102,7 @@ func (u *UserController) UserInfo(c *gin.Context) {
 			Avatar:          user.Avatar,
 			BackgroundImage: user.BackGroundImage,
 			Signature:       user.Signature,
-			TotalFavorited:  "",
+			TotalFavorited:  0,
 			WorkCount:       0,
 			FavoriteCount:   0,
 		},
