@@ -89,10 +89,10 @@ func CreateClient(accessKeyId *string, accessKeySecret *string) (_result *vod201
 	return _result, _err
 }
 
-func GetPlayInfo(videoID string) (repository.Video, error) {
+func GetPlayInfo(videoID string) (repository.Videos, error) {
 	client, err := CreateClient(tea.String(accessKeyId), tea.String(accessKeySecret))
 	if err != nil {
-		return repository.Video{}, fmt.Errorf("failed to create client: %w", err)
+		return repository.Videos{}, fmt.Errorf("failed to create client: %w", err)
 	}
 
 	fmt.Println(videoID)
@@ -101,7 +101,7 @@ func GetPlayInfo(videoID string) (repository.Video, error) {
 		VideoId: tea.String(id),
 	}
 
-	var v repository.Video
+	var v repository.Videos
 	err = func() error {
 		defer func() {
 			if r := tea.Recover(recover()); r != nil {
@@ -128,12 +128,12 @@ func GetPlayInfo(videoID string) (repository.Video, error) {
 			return fmt.Errorf("failed to parse creation time: %w", err)
 		}
 
-		v = repository.Video{VideoID: -1, UserID: -1, PlayURL: playURL, CoverURL: coverURL, Title: title, CreateTime: creationTime}
+		v = repository.Videos{VideoID: -1, UserID: -1, PlayURL: playURL, CoverURL: coverURL, Title: title, CreateTime: creationTime}
 		return nil
 	}()
 
 	if err != nil {
-		return repository.Video{}, fmt.Errorf("API error: %w", err)
+		return repository.Videos{}, fmt.Errorf("API error: %w", err)
 	}
 
 	return v, nil

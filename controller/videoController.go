@@ -14,7 +14,9 @@ type VideoController struct {
 // 获取视频
 func (ctrl *VideoController) DouyinFeedHandler(c *gin.Context) {
 	// 调用 service.GetDouyinFeed 获取 Douyin Feed 数据
-	response, err := ctrl.videoService.GetDouyinFeed()
+	videoService := ctrl.videoService.NewVideoService()
+
+	response, err := videoService.GetDouyinFeed()
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -43,4 +45,24 @@ func (ctrl *VideoController) DouyinPublishActionHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Video created successfully"})
+}
+
+// 获取视频
+func (ctrl *VideoController) DouyinPublishList(c *gin.Context) {
+	// 调用 service.GetDouyinFeed 获取 Douyin Feed 数据
+
+	token := c.Query("token")
+	userId := c.Query("user_id")
+
+	response, err := ctrl.videoService.GetPublishList(token, userId)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// 设置 HTTP 响应的 Content-Type 为 application/json
+	c.Header("Content-Type", "application/json")
+
+	// 将服务层返回的数据作为 JSON 响应发送
+	c.JSON(http.StatusOK, response)
 }

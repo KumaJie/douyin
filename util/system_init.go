@@ -17,7 +17,7 @@ func InitConfig() {
 	viper.SetConfigName("App")
 
 	//添加配置文件的路径为 "config"
-	viper.AddConfigPath("/config")
+	viper.AddConfigPath("config")
 
 	//读取配置文件并将其加载到 viper 中。
 	err := viper.ReadInConfig()
@@ -38,6 +38,7 @@ func InitMysql() {
 			Colorful:      true,
 		},
 	)
+	fmt.Println(viper.GetString("mysql.url"))
 	DB, _ = gorm.Open(mysql.Open(viper.GetString("mysql.url")), &gorm.Config{Logger: newLogger})
 	// 其他操作...
 }

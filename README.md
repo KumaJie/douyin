@@ -27,3 +27,6 @@
 
 * 配置文件
 
+///douyin/comment/action/ - 评论操作
+///douyin/comment/list/ - 视频评论列表
+///douyin/favorite/list/ - 喜欢列表
